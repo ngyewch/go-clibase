@@ -1,4 +1,4 @@
-package common
+package clibase
 
 import (
 	slog "github.com/go-eden/slf4go"
