@@ -1,4 +1,5 @@
-FROM golang:1.17.5-alpine
+VERSION 0.7
+FROM golang:1.19.7-alpine
 WORKDIR /workspace
 
 build:
