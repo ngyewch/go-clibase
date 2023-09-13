@@ -1,4 +1,4 @@
-package clibase
+package cobra_utils
 
 import "github.com/spf13/cobra"
 

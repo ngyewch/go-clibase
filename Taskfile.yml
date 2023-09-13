@@ -4,9 +4,12 @@ tasks:
   build:
     desc: Build
     cmds:
-      - earthly +build
+      - go mod download
+      - go mod tidy
+      - go test ./...
+      - go build ./...
 
   dependencyUpdates:
     desc: Show dependency updates
     cmds:
-      - go list -u -m -json all | docker run --rm -i psampaz/go-mod-outdated -update -direct
+      - go list -u -m -json all | go run github.com/psampaz/go-mod-outdated@v0.9.0 -update -direct
