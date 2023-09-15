@@ -1,6 +1,7 @@
 package slog_utils
 
 import (
+	"io"
 	"log/slog"
 	"os"
 	"strings"
@@ -13,6 +14,9 @@ const (
 var (
 	programLevel = new(slog.LevelVar)
 	rootLogger   *slog.Logger
+	writer       = &replaceableWriter{
+		w: os.Stdout,
+	}
 )
 
 func GetRootLogger() *slog.Logger {
@@ -48,8 +52,20 @@ func SetLevel(level slog.Level) {
 	programLevel.Set(level)
 }
 
+func SetWriter(w io.Writer) {
+	writer.w = w
+}
+
 func init() {
-	rootLogger = slog.New(slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{
+	rootLogger = slog.New(slog.NewTextHandler(writer, &slog.HandlerOptions{
 		Level: programLevel,
 	}))
+}
+
+type replaceableWriter struct {
+	w io.Writer
+}
+
+func (w *replaceableWriter) Write(p []byte) (int, error) {
+	return w.w.Write(p)
 }
