@@ -1,2 +1,3 @@
-task 3.29.1
-golang 1.21.1
+task 3.34.1
+golang 1.22.0
+go:github.com/psampaz/go-mod-outdated v0.9.0
