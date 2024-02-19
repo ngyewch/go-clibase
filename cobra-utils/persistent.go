@@ -2,6 +2,16 @@ package cobra_utils
 
 import "github.com/spf13/cobra"
 
+func ChainPersistentE(cmd *cobra.Command, preRunE func(cmd *cobra.Command, args []string) error, postRunE func(cmd *cobra.Command, args []string) error) {
+	cmd.PersistentPreRunE = ChainedPersistentPreRunE(preRunE)
+	cmd.PersistentPostRunE = ChainedPersistentPostRunE(postRunE)
+}
+
+func ChainPersistent(cmd *cobra.Command, preRun func(cmd *cobra.Command, args []string), postRun func(cmd *cobra.Command, args []string)) {
+	cmd.PersistentPreRun = ChainedPersistentPreRun(preRun)
+	cmd.PersistentPostRun = ChainedPersistentPostRun(postRun)
+}
+
 func ChainedPersistentPreRunE(preRunE func(cmd *cobra.Command, args []string) error) func(cmd *cobra.Command, args []string) error {
 	return func(cmd *cobra.Command, args []string) error {
 		for parent := cmd.Parent(); parent != nil; parent = parent.Parent() {
@@ -13,7 +23,11 @@ func ChainedPersistentPreRunE(preRunE func(cmd *cobra.Command, args []string) er
 				break
 			}
 		}
-		return preRunE(cmd, args)
+		if preRunE != nil {
+			return preRunE(cmd, args)
+		} else {
+			return nil
+		}
 	}
 }
 
@@ -25,7 +39,9 @@ func ChainedPersistentPreRun(preRun func(cmd *cobra.Command, args []string)) fun
 				break
 			}
 		}
-		preRun(cmd, args)
+		if preRun != nil {
+			preRun(cmd, args)
+		}
 	}
 }
 
@@ -40,7 +56,11 @@ func ChainedPersistentPostRunE(postRunE func(cmd *cobra.Command, args []string) 
 				break
 			}
 		}
-		return postRunE(cmd, args)
+		if postRunE != nil {
+			return postRunE(cmd, args)
+		} else {
+			return nil
+		}
 	}
 }
 
@@ -52,6 +72,8 @@ func ChainedPersistentPostRun(postRun func(cmd *cobra.Command, args []string)) f
 				break
 			}
 		}
-		postRun(cmd, args)
+		if postRun != nil {
+			postRun(cmd, args)
+		}
 	}
 }
