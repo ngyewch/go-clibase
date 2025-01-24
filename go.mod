@@ -1,3 +1,3 @@
 module github.com/ngyewch/go-clibase
 
-go 1.22
+go 1.21
